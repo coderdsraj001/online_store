@@ -25,12 +25,15 @@ class ProductsController < ApplicationController
 
     respond_to do |format|
       if @product.save
-        format.html { redirect_to product_url(@product), notice: "Product was successfully created." }
-        format.json { render :show, status: :created, location: @product }
+        format.html { redirect_to product_url(@product), 
+          notice: "Product was successfully created." }
+        format.json { render :show, 
+          status: :created, location: @product }
       else
         puts @product.errors.full_messages
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @product.errors, status: :unprocessable_entity }
+        format.json { render json: @product.errors, 
+          status: :unprocessable_entity }
       end
     end
   end
@@ -64,15 +67,6 @@ class ProductsController < ApplicationController
     end
   end
 
-  def who_bought
-    @product = Product.find(params[:id])
-    @latest_order = @product.orders.order(:updated_at).last
-    if stale?(@latest_order)
-      respond_to do |format|
-        format.atom
-      end
-    end
-  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -84,4 +78,15 @@ class ProductsController < ApplicationController
     def product_params
       params.require(:product).permit(:title, :description, :image_url, :price)
     end
+
+    def who_bought
+      @product = Product.find(params[:id])
+      @latest_order = @product.orders.order(:updated_at).last
+      if stale?(@latest_order)
+        respond_to do |format|
+          format.atom
+        end
+      end
+    end
+
 end
